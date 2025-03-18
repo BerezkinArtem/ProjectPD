@@ -34,8 +34,8 @@ import {
   
     name: string;
 
-    @Column()
-    email: string;
+   
+   
   
    
   

@@ -2,7 +2,6 @@ import { Role, UserAccountStatus, SecuredUser } from 'src/common/types';
 export declare class User {
     id: number;
     name: string;
-    email: string;
     passwordHash: string;
     firstname: string;
     lastname: string;

@@ -28,7 +28,7 @@ export class UsersService {
 
   async findOne(username: string): Promise<User | null> {
 
-    return this.userRepository.findOneBy({ email: username });
+    return this.userRepository.findOneBy({ name: username });
 
   }
 
@@ -60,7 +60,7 @@ export class UsersService {
 
     const user = new User();
 
-    user.email = username;
+   
 
     user.firstname = firstname;
 
@@ -110,7 +110,7 @@ export class UsersService {
 
     if (user) {
 
-      user.email = updatedUserData.name;
+      
 
       user.firstname = updatedUserData.firstname;
 

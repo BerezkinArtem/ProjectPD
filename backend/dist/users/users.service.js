@@ -25,14 +25,13 @@ let UsersService = class UsersService {
         this.userRepository = userRepository;
     }
     async findOne(username) {
-        return this.userRepository.findOneBy({ email: username });
+        return this.userRepository.findOneBy({ name: username });
     }
     async findOneById(id) {
         return this.userRepository.findOneBy({ id });
     }
     async create(username, password, firstname, lastname, roles = [types_1.Role.user], status = types_1.UserAccountStatus.pending) {
         const user = new user_entity_1.User();
-        user.email = username;
         user.firstname = firstname;
         user.lastname = lastname;
         user.passwordHash = await bcrypt.hash(password, 5);
@@ -54,7 +53,6 @@ let UsersService = class UsersService {
     async update(id, updatedUserData) {
         const user = await this.findOneById(id);
         if (user) {
-            user.email = updatedUserData.name;
             user.firstname = updatedUserData.firstname;
             user.lastname = updatedUserData.lastname;
             user.roles = updatedUserData.roles;
