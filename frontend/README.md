@@ -1,4 +1,4 @@
-# task manager (frontend)
+# task-manager (frontend)
 
 A Quasar Project
 
@@ -29,6 +29,7 @@ yarn format
 # or
 npm run format
 ```
+
 
 
 ### Build the app for production
