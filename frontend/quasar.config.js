@@ -1,6 +1,6 @@
-import { defineConfig } from 'quasar/wrappers';
+import { defineConfig } from '#q-app/wrappers';
 
-export default defineConfig((ctx) => {
+export default defineConfig((/* ctx */) => {
   return {
     boot: ['axios'],
     css: ['app.scss'],
