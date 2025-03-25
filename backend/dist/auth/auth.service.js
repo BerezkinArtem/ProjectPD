@@ -42,6 +42,7 @@ let AuthService = AuthService_1 = class AuthService {
             firstname: user.firstname,
             lastname: user.lastname,
             roles: user.roles,
+            userId: user.id
         };
     }
     async signup(payload) {

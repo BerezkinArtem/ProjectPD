@@ -13,6 +13,7 @@ export interface LoginResponseDto {
     firstname: string;
     lastname: string;
     roles: Role[];
+    userId: number;
 }
 export interface SignUpRequestDto {
     username: string;
@@ -40,3 +41,17 @@ export type SecuredUser = {
     roles: Role[];
     status: UserAccountStatus;
 };
+export declare enum TaskStatus {
+    new = "new",
+    inProgress = "inProgress",
+    done = "done"
+}
+export type TaskDto = {
+    id: number;
+    title: string;
+    status: TaskStatus;
+    createdAt: Date;
+    assignee: SecuredUser;
+    author: SecuredUser;
+};
+export type CreateUpdateTaskDto = Omit<TaskDto, 'id' | 'createdAt' | 'author'>;
