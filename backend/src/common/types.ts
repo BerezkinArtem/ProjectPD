@@ -35,6 +35,7 @@ export interface CreateUserDto {
   password: string;
   roles: Role[];
   status: UserAccountStatus;
+  
 }
 
 export type UpdateUserDto = Omit<CreateUserDto, 'password'>;
