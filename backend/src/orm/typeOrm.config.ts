@@ -34,6 +34,6 @@ export default new DataSource({
 
   entities: [User, Task],
 
-  migrations: ['dist/src/orm/migrations/*.js'],
+  migrations: ['dist/orm/migrations/*.js'],
 
 });

@@ -15,6 +15,6 @@ exports.default = new typeorm_1.DataSource({
     password: configService.get('DB_PASSWORD'),
     database: configService.get('DB_DATABASE'),
     entities: [user_entity_1.User, task_entity_1.Task],
-    migrations: ['dist/src/orm/migrations/*.js'],
+    migrations: ['dist/orm/migrations/*.js'],
 });
 //# sourceMappingURL=typeOrm.config.js.map

@@ -34,29 +34,72 @@ export class TasksService {
 
   ) {}
 
-  async create(createTaskDto: CreateUpdateTaskDto, user: any) {
+  
+async create(createTaskDto: CreateUpdateTaskDto, user: any) {
 
-    const authorUser = await this.usersService.findOneById(user.userId);
+  const authorUser = await this.usersService.findOneById(user.userId);
 
- 
+  const assigneeUser = await this.usersService.findOneById(
 
-    const newTask = new Task();
+    createTaskDto.assignee.id,
 
-    newTask.title = createTaskDto.title;
+  );
 
-    newTask.status = createTaskDto.status;
 
-    newTask.author = authorUser!;
 
- 
+  const newTask = new Task();
 
-    await this.taskRepository.save(newTask);
+  newTask.title = createTaskDto.title;
 
- 
+  newTask.status = createTaskDto.status;
 
-    return newTask.getDto();
+  newTask.author = authorUser!;
+
+  newTask.assignee = assigneeUser!;
+
+
+
+  await this.taskRepository.save(newTask);
+
+
+
+  return newTask.getDto();
+
+}
+
+
+
+async update(id: number, updateTaskDto: CreateUpdateTaskDto) {
+
+  const existedTask = await this.findOne(id);
+
+  const assigneeUser = await this.usersService.findOneById(
+
+    updateTaskDto.assignee.id,
+
+  );
+
+  if (existedTask) {
+
+    existedTask.title = updateTaskDto.title;
+
+    existedTask.status = updateTaskDto.status;
+
+    existedTask.assignee = assigneeUser!;
+
+
+
+    await this.taskRepository.save(existedTask);
+
+
+
+    return existedTask.getDto();
 
   }
+
+}
+
+
 
  
 
@@ -80,27 +123,7 @@ export class TasksService {
 
  
 
-  async update(id: number, updateTaskDto: CreateUpdateTaskDto) {
-
-    const existedTask = await this.findOne(id);
-
-    if (existedTask) {
-
-      existedTask.title = updateTaskDto.title;
-
-      existedTask.status = updateTaskDto.status;
-
  
-
-      await this.taskRepository.save(existedTask);
-
- 
-
-      return existedTask.getDto();
-
-    }
-
-  }
 
  
 

@@ -18,6 +18,20 @@
 
       <q-card-section class="q-pa-none">
 
+        Исполнитель:
+
+        {{
+
+          `${$props.value.assignee.firstname}
+
+        ${$props.value.assignee.lastname}`
+
+        }}</q-card-section
+
+      >
+
+      <q-card-section class="q-pa-none">
+
         Автор:
 
         {{

@@ -1,8 +1,24 @@
 <template>
 
-  <q-bar class="q-py-lg">
+  <q-bar class="q-pa-lg">
 
     <q-btn color="primary" @click="onNewClick">Создать</q-btn>
+
+    <div>Фильтр:</div>
+
+    <q-checkbox v-model="onlyMyTasks" label="Только назначенные на меня" />
+
+    <q-input class="q-px-lg" outlined dense v-model="searchText" label="Поиск">
+
+      <template v-slot:append>
+
+        <q-icon name="search" color="orange" />
+
+      </template>
+
+    </q-input>
+
+    <q-btn icon="cancel" label="Сброс фильтра" @click="onFilterReset"></q-btn>
 
   </q-bar>
 
@@ -92,29 +108,89 @@ import * as api from '../api/tasks.api';
 
 import { TaskDto, TaskStatus } from '../../../backend/src/common/types';
 
+import { useMainStore } from 'src/stores/main-store';
+
+import { storeToRefs } from 'pinia';
+
  
 
 const $q = useQuasar();
 
  
 
+const mainStore = useMainStore();
+
+ 
+
+let { userId } = storeToRefs(mainStore);
+
+ 
+
+const onlyMyTasks = ref(false);
+
+const searchText = ref('');
+
+ 
+
 const allTasks = ref([] as TaskDto[]);
+
+ 
+
+const filteredTasks = computed(() => {
+
+  return allTasks.value.filter((task) => {
+
+    console.log('Task filter.');
+
+ 
+
+    let visible = true;
+
+    if (onlyMyTasks.value && task.assignee.id != userId.value) {
+
+      visible = false;
+
+    }
+
+ 
+
+    if (
+
+      searchText.value.length > 1 &&
+
+      task.title.indexOf(searchText.value) < 0
+
+    ) {
+
+      visible = false;
+
+    }
+
+ 
+
+    return visible;
+
+  });
+
+});
+
+ 
 
 const newTasks = computed(() =>
 
-  allTasks.value.filter((v) => v.status == TaskStatus.new)
+  filteredTasks.value.filter((v) => v.status == TaskStatus.new)
 
 );
 
 const inProgressTasks = computed(() =>
 
-  allTasks.value.filter((v) => v.status == TaskStatus.inProgress)
+  filteredTasks.value.filter((v) => v.status == TaskStatus.inProgress)
 
 );
 
 const doneTasks = computed(() =>
 
-  allTasks.value.filter((v) => v.status == TaskStatus.done)
+  filteredTasks.value.filter((v) => v.status == TaskStatus.done)
 
 );
 
@@ -209,6 +285,16 @@ const onTaskEdit = (value: TaskDto) => {
       console.log('Cancel');
 
     });
+
+};
+
+ 
+
+const onFilterReset = () => {
+
+  onlyMyTasks.value = false;
+
+  searchText.value = '';
 
 };
 
