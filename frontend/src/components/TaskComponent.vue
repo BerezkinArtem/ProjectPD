@@ -20,6 +20,8 @@
 
         Исполнитель:
 
+        
+
         {{
 
           `${$props.value.assignee.firstname}
