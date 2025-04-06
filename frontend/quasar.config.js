@@ -40,7 +40,7 @@ module.exports = configure(function (ctx) {
     },
     framework: {
       config: {},
-      plugins: ['Notify', 'Dialog'],
+      plugins: ['Dialog', 'Notify']
     },
     animations: [],
     ssr: {
