@@ -1,22 +1,23 @@
 <template>
-  <div class="fullscreen bg-blue text-white text-center q-pa-md flex flex-center">
+  <div class="fullscreen bg-grey-1 text-center q-pa-md flex flex-center">
     <div>
-      <div style="font-size: 30vh">
+      <div class="text-grey-9" style="font-size: 20vh; font-weight: 300; line-height: 1">
         404
       </div>
 
-      <div class="text-h2" style="opacity:.4">
-        Oops. Nothing here...
+      <div class="text-subtitle1 text-grey-7 q-mt-md">
+        Страница не найдена
       </div>
 
       <q-btn
-        class="q-mt-xl"
-        color="white"
-        text-color="blue"
+        class="q-mt-lg"
         unelevated
+        color="grey-8"
+        text-color="white"
         to="/"
-        label="Go Home"
+        label="На главную"
         no-caps
+        padding="10px 24px"
       />
     </div>
   </div>
@@ -27,3 +28,11 @@ defineOptions({
   name: 'ErrorNotFound'
 });
 </script>
+
+<style scoped>
+.q-btn {
+  border-radius: 6px;
+  font-weight: 500;
+  letter-spacing: normal;
+}
+</style>
