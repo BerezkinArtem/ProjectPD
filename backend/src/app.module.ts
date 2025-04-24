@@ -8,10 +8,12 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from './orm/user.entity';
 import { TasksModule } from 'src/tasks/tasks.module';
 import { Task } from './orm/task.entity';
+import { TeamsModule } from './teams/teams.module';
 
 @Module({
   imports: [
     AuthModule,
+    TeamsModule,
     UsersModule,
     ConfigModule.forRoot({
       isGlobal: true,

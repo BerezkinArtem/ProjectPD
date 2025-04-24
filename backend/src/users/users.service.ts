@@ -8,13 +8,16 @@ import { User } from 'src/orm/user.entity';
 
 import * as bcrypt from 'bcrypt';
 
-import { Role, UpdateUserDto, UserAccountStatus } from 'src/common/types';
+import { RequestWithUser, Role, UpdateUserDto, UserAccountStatus } from 'src/common/types';
 
  
 
 @Injectable()
 
 export class UsersService {
+  findById(id: number) {
+      throw new Error('Method not implemented.');
+  }
 
   constructor(
 
@@ -40,7 +43,13 @@ export class UsersService {
 
   }
 
- 
+  async getUserReference(id: number): Promise<User> {
+    const user = new User();
+    user.id = id;
+    return user;
+    // Или, если нужно больше полей:
+    // return this.userRepository.findOne({ where: { id } });
+  }
 
   async create(
 
@@ -77,7 +86,15 @@ export class UsersService {
     return createdUser;
 
   }
-
+  public createUserFromRequest(userData: RequestWithUser['user']): User {
+    const user = new User();
+    user.id = userData.id;
+    user.username = userData.username;
+    user.firstname = userData.firstname;
+    user.lastname = userData.lastname;
+    user.roles = userData.roles;
+    return user;
+  }
  
 
   async setStatus(id: number, status: UserAccountStatus): Promise<void> {
