@@ -20,8 +20,6 @@
 
         Исполнитель:
 
-        
-
         {{
 
           `${$props.value.assignee.firstname}
@@ -63,41 +61,41 @@
   </q-card>
 
 </template>
-
- 
-
-<script setup lang="ts">
-
-import { TaskDto } from '../../../backend/src/common/types';
-
-import { date } from 'quasar';
-
- 
-
-interface TaskComponentProps {
-
-  value: TaskDto;
-
-}
-
- 
-
-const emit = defineEmits(['on-edit-click']);
-
- 
-
-const props = defineProps<TaskComponentProps>();
-
- 
-
-const creationDate = date.formatDate(props.value.createdAt, 'DD.MM.YYYY');
-
- 
-
-const onChangeClick = () => {
-
-  emit('on-edit-click', props.value);
-
-};
-
-</script>
+  
+   
+  
+  <script setup lang="ts">
+  
+  import { TaskDto } from '../../../backend/src/common/types';
+  
+  import { date } from 'quasar';
+  
+   
+  
+  interface TaskComponentProps {
+  
+    value: TaskDto;
+  
+  }
+  
+   
+  
+  const emit = defineEmits(['on-edit-click']);
+  
+   
+  
+  const props = defineProps<TaskComponentProps>();
+  
+   
+  
+  const creationDate = date.formatDate(props.value.createdAt, 'DD.MM.YYYY');
+  
+   
+  
+  const onChangeClick = () => {
+  
+    emit('on-edit-click', props.value);
+  
+  };
+  
+  </script>

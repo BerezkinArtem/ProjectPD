@@ -21,25 +21,18 @@ const roles_decorator_1 = require("../auth/roles.decorator");
 const types_1 = require("../common/types");
 const roles_guard_1 = require("../auth/roles.guard");
 let UsersController = UsersController_1 = class UsersController {
-    usersService;
-    logger = new common_1.Logger(UsersController_1.name);
     constructor(usersService) {
         this.usersService = usersService;
+        this.logger = new common_1.Logger(UsersController_1.name);
     }
     async findAll() {
         return this.usersService.findAll();
     }
-    async setUserStatus(id, body) {
-        return this.usersService.setStatus(id, body.value);
-    }
     async create(body) {
-        const createdUser = await this.usersService.create(body.name, body.password, body.firstname, body.lastname, body.roles, body.status);
-        return createdUser.getSecuredDto();
+        return this.usersService.create(body.name, body.password, body.firstname, body.lastname, body.roles, body.status);
     }
-    async getUser(id) {
-        const user = await this.usersService.findOneById(id);
-        if (user)
-            return user.getSecuredDto();
+    async findOne(id) {
+        return this.usersService.findOneById(id);
     }
     update(id, payload) {
         return this.usersService.update(id, payload);
@@ -53,16 +46,6 @@ __decorate([
     __metadata("design:paramtypes", []),
     __metadata("design:returntype", Promise)
 ], UsersController.prototype, "findAll", null);
-__decorate([
-    (0, common_1.Post)(':id/status'),
-    (0, roles_decorator_1.Roles)(types_1.Role.admin),
-    (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard, roles_guard_1.RolesGuard),
-    __param(0, (0, common_1.Param)('id')),
-    __param(1, (0, common_1.Body)()),
-    __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object, Object]),
-    __metadata("design:returntype", Promise)
-], UsersController.prototype, "setUserStatus", null);
 __decorate([
     (0, common_1.Post)(),
     (0, roles_decorator_1.Roles)(types_1.Role.admin),
@@ -79,7 +62,7 @@ __decorate([
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),
     __metadata("design:returntype", Promise)
-], UsersController.prototype, "getUser", null);
+], UsersController.prototype, "findOne", null);
 __decorate([
     (0, common_1.Patch)(':id'),
     (0, common_1.UseGuards)(jwt_auth_guard_1.JwtAuthGuard),

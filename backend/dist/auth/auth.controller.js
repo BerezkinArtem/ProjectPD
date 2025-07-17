@@ -19,12 +19,10 @@ const local_auth_guard_1 = require("./local-auth.guard");
 const auth_service_1 = require("./auth.service");
 const users_service_1 = require("../users/users.service");
 let AuthController = AuthController_1 = class AuthController {
-    authService;
-    usersService;
-    logger = new common_1.Logger(AuthController_1.name);
     constructor(authService, usersService) {
         this.authService = authService;
         this.usersService = usersService;
+        this.logger = new common_1.Logger(AuthController_1.name);
     }
     async login(req) {
         return this.authService.login(req.user);

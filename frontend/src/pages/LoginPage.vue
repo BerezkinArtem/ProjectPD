@@ -1,70 +1,56 @@
 <template>
-  <q-page class="row items-center justify-evenly bg-grey-2">
-    <q-card flat class="auth-card" style="width: 100%; max-width: 400px;">
-      <!-- Логотип или название приложения -->
-      <div class="text-center q-pt-xl">
-        <div class="text-h4 text-weight-thin">Вход</div>
-        <div class="text-subtitle2 text-grey-7 q-mt-sm">Добро пожаловать </div>
-      </div>
-
-      <q-card-section class="q-px-xl q-py-lg">
-        <q-input 
-          v-model="login" 
-          label="Логин" 
-          outlined
-          color="grey-8"
-          class="q-mb-md"
-          dense
-          :rules="[val => !!val || 'Поле обязательно']"
-        >
-          <template v-slot:prepend>
-            <q-icon name="person_outline" size="xs" />
-          </template>
-        </q-input>
-
-        <q-input 
-          type="password"
-          v-model="password" 
-          label="Пароль" 
-          outlined
-          color="grey-8"
-          dense
-          :rules="[val => !!val || 'Поле обязательно']"
-        >
-          <template v-slot:prepend>
-            <q-icon name="lock_outline" size="xs" />
-          </template>
-        </q-input>
-
-        <div class="text-right q-mt-sm">
-          <a href="#" class="text-caption text-grey-6" style="text-decoration: none;">Забыли пароль?</a>
+  <q-page class="row items-center justify-evenly">
+    <q-card flat bordered class="auth-card">
+      <q-card-section>
+        <div class="text-h4 text-center q-mb-md">Авторизация</div>
+        <div class="text-subtitle2 text-center q-mb-md text-grey-7">
+          Введите адрес электронной почты и пароль
         </div>
       </q-card-section>
 
-      <q-card-actions vertical class="q-px-xl q-pb-xl">
-        <q-btn 
-          unelevated
-          color="black"
-          text-color="white"
-          @click="onLogin"
-          class="full-width q-py-sm"
-          label="Войти"
+      <q-card-section class="q-pt-none">
+        <q-input
+          v-model="login"
+          label="Логин"
+          dense
+          outlined
+          class="q-mb-md"
+          placeholder="example_mail@std.tyulu.ru"
         />
-        
-        <div class="row items-center q-mt-md">
-          <q-separator class="col" />
-          <span class="text-caption text-grey-6 q-px-sm">или</span>
-          <q-separator class="col" />
-        </div>
+        <q-input
+          type="password"
+          v-model="password"
+          label="Пароль"
+          dense
+          outlined
+          class="q-mb-md"
+          placeholder="**********"
+        />
+      </q-card-section>
 
-        <q-btn 
-          flat
-          @click="onSignUp"
-          class="full-width q-mt-md"
-          label="Создать аккаунт"
-          color="grey-8"
+      <q-card-section class="q-pt-none text-center">
+        <a href="#" class="text-caption text-grey-7" @click.prevent="onForgotPassword">
+          Забыли пароль?
+        </a>
+      </q-card-section>
+
+      <q-card-actions align="center">
+        <q-btn
+          unelevated
+          label="Войти"
+          @click="onLogin"
+          class="auth-btn q-mb-md"
         />
       </q-card-actions>
+
+      <q-card-section class="text-center">
+        <q-btn
+          label="Регистрация"
+          flat
+          @click="onSignUp"
+          class="text-grey-7"
+        />
+      </q-card-section>
     </q-card>
   </q-page>
 </template>
@@ -75,12 +61,10 @@ import { useRouter } from 'vue-router';
 import * as api from '../api/auth.api';
 import { useMainStore } from 'src/stores/main-store';
 import { useQuasar } from 'quasar';
-// import { storeToRefs } from 'pinia';
 
 const router = useRouter();
 const mainStore = useMainStore();
 const $q = useQuasar();
-// let { initAppState } = storeToRefs(mainStore);
 
 const login = ref('');
 const password = ref('');
@@ -90,29 +74,139 @@ const onLogin = async () => {
 
   try {
     response = await api.login(login.value, password.value);
-
   } catch {
     console.log('Login failed');
   }
 
-  console.log('login: ', response);
-
   if (response) {
-    // save user into store
-    mainStore.initAppState(response)
-    router.push({ path: '/' })
+    mainStore.initAppState(response);
+    router.push({ path: '/' });
+    setTimeout(() => window.location.reload(), 10);
   } else {
     $q.notify({
       message: 'Войти не удалось',
-      caption: 'Удостоверьтесь в правильности введеного Вами логина и пароля.',
-      color: 'red',
-      icon: 'error'
-    })
+      caption: 'Удостоверьтесь в правильности введеного ВАМИ логина и пароля.',
+      color: 'negative',
+      icon: 'error',
+    });
   }
-}
+};
 
 const onSignUp = () => {
-  router.push({ path: '\signup' })
+  router.push({ path: '/signup' });
+};
+
+const onForgotPassword = () => {
+  console.log('Забыли пароль?');
+  $q.notify({
+    message: 'Попробуйте вспомнить пароль',
+  })
+};
+</script>
+
+<style scoped>
+.q-page {
+  background-color: #f5f5f5;
+  min-height: 100vh;
 }
 
-</script>
+.auth-card {
+  width: 400px;
+  padding: 32px;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  background: white;
+  border: none;
+}
+
+.auth-btn {
+  width: 100%;
+  background-color: #424242;
+  color: white;
+  border-radius: 6px;
+  padding: 8px;
+  transition: all 0.3s ease;
+}
+
+.auth-btn:hover {
+  background-color: #616161;
+}
+
+.q-field--outlined .q-field__control {
+  border-radius: 6px;
+  border-color: #e0e0e0;
+}
+
+.q-field--outlined:hover .q-field__control {
+  border-color: #bdbdbd;
+}
+
+.q-field__label {
+  color: #757575;
+}
+
+.q-input {
+  font-size: 14px;
+}
+
+.text-h4 {
+  color: #424242;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+a {
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+a:hover {
+  color: #424242;
+}
+</style>
+
+<style>
+.body--dark .q-page {
+  background-color: #212121;
+}
+
+.body--dark .auth-card {
+  background-color: #424242;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+.body--dark .text-h4,
+.body--dark .auth-btn {
+  color: white;
+}
+
+.body--dark .auth-btn {
+  background-color: #616161;
+}
+
+.body--dark .auth-btn:hover {
+  background-color: #757575;
+}
+
+.body--dark .q-field--outlined .q-field__control {
+  border-color: #616161;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.body--dark .q-field--outlined:hover .q-field__control {
+  border-color: #9e9e9e;
+}
+
+.body--dark .q-field__label {
+  color: #bdbdbd;
+}
+
+.body--dark .text-subtitle2,
+.body--dark .text-caption {
+  color: #e0e0e0 !important;
+}
+
+.body--dark a:hover {
+  color: #e0e0e0;
+}
+</style>

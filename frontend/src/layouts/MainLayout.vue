@@ -1,113 +1,233 @@
 <template>
-  <q-layout view="hHh Lpr fFf" class="bg-grey-1">
-    <!-- Шапка -->
-    <q-header elevated class="bg-white text-black shadow-2">
-      <q-toolbar class="q-px-md">
-        <q-btn 
-          flat 
-          dense 
-          round 
-          icon="menu" 
-          aria-label="Menu" 
-          @click="toggleLeftDrawer" 
-          class="text-grey-8"
-        />
-
-        <q-toolbar-title class="text-h5 text-weight-medium text-primary">
-          ПОРТАЛ ВШЦТ
-        </q-toolbar-title>
-
-        <div class="row items-center q-gutter-sm">
-          <q-btn 
-            flat 
-            round 
-            dense 
-            icon="telegram" 
-            color="grey"
-            href="https://t.me/aaafaaaaaaaaaaaaafffff"
-            target="_blank"
-          />
+  <q-layout view="hHh Lpr fFf">
+    <q-header elevated class="header">
+      <q-toolbar>
+        <div class="row items-center q-gutter-md">
           <q-avatar 
             icon="account_circle" 
             size="md" 
-            color="grey-3" 
-            text-color="grey-8"
+            color="grey-7" 
+            text-color="white"
           />
-          <span class="text-caption text-grey-8">{{ `${firstname} ${lastname}` }}</span>
+          
+          <div class="column">
+            <span 
+              class="user-name text-subtitle1"
+              @click="openUserProfile"
+            >
+              {{ `${firstname} ${lastname}` }}
+            </span>
+            <span class="user-role text-caption text-grey-4" v-if="formattedRoles.length > 0">
+              {{ formattedRoles.join(', ') }}
+            </span>
+          </div>
+        </div>
+
+        <q-space />
+
+        <div class="row q-gutter-sm">
+          <q-btn
+            v-if="showAdminButton"
+            flat
+            label="Админка"
+            @click="goToAdmin"
+            class="nav-btn"
+          />
+          <q-btn
+            v-if="showProjectsButton"
+            flat
+            label="Проекты"
+            @click="goToProjects"
+            class="nav-btn"
+          />
+          <q-btn 
+            flat 
+            label="Биржа" 
+            @click="goToMarketplace" 
+            class="nav-btn"
+          />
+          <q-btn 
+            flat 
+            label="Идеи" 
+            @click="goToIdeas" 
+            class="nav-btn"
+          />
+          <q-btn 
+            flat 
+            label="Команды" 
+            @click="goToTeams" 
+            class="nav-btn"
+          />
+        </div>
+
+        <q-space />
+
+        <div class="row items-center q-gutter-sm">
+          <q-btn
+            :icon="isDark ? 'light_mode' : 'dark_mode'"
+            flat
+            dense
+            round
+            @click="toggleDarkMode"
+          />
           <q-btn 
             icon="logout" 
-            color="grey-8" 
+            flat 
             dense 
-            unelevated 
             round 
-            size="sm"
-            @click="onLogout"
+            @click="onLogout" 
           />
         </div>
       </q-toolbar>
     </q-header>
 
-    <!-- Боковое меню -->
-    <q-drawer 
-      v-model="leftDrawerOpen" 
-      show-if-above 
-      bordered
-      :width="240"
-      class="bg-grey-2"
-    >
-      <SideMenu />
-    </q-drawer>
-
-    <!-- Основное содержимое -->
     <q-page-container>
       <router-view />
     </q-page-container>
+
+    <UserProfile ref="userProfile" :roles="formattedRoles" />
+    <PendingRequestsDialog ref="pendingRequestsDialog" />
   </q-layout>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
-import SideMenu from 'components/SideMenu.vue'
+import { computed, ref } from 'vue';
 import { useMainStore } from 'src/stores/main-store';
 import { storeToRefs } from 'pinia';
 import * as api from '../api/auth.api';
 import { useRouter } from 'vue-router';
+import UserProfile from './UserProfile.vue';
+import { useQuasar } from 'quasar';
+import PendingRequestsDialog from 'src/pages/PendingRequestsDialog.vue';
 
 defineOptions({
-  name: 'MainLayout'
+  name: 'MainLayout',
 });
 
 const mainStore = useMainStore();
 const router = useRouter();
+const userProfile = ref();
+const $q = useQuasar();
 
-let { firstname, lastname } = storeToRefs(mainStore);
+const isDark = ref($q.dark.isActive);
+const toggleDarkMode = () => {
+  $q.dark.toggle();
+  isDark.value = $q.dark.isActive;
+  localStorage.setItem('darkMode', String(isDark.value));
+};
 
-const leftDrawerOpen = ref(false);
+const pendingRequestsDialog = ref<InstanceType<typeof PendingRequestsDialog>>();
 
-function toggleLeftDrawer() {
-  leftDrawerOpen.value = !leftDrawerOpen.value;
-}
+const checkPendingRequests = async () => {
+  if (mainStore.team_leader) {
+    const { hasRequests, teamName, pendingUsers } = await mainStore.hasPendingRequests();
+    if (hasRequests) {
+      $q.notify({
+        message: `Имеются нерассмотренные заявки на вступление в команду "${teamName}"`,
+        color: 'info',
+        icon: 'people',
+        timeout: 0,
+        actions: [
+          {
+            label: 'Просмотреть',
+            color: 'white',
+            handler: () => {
+              pendingRequestsDialog.value?.open(pendingUsers, teamName, mainStore.team_leader?.id);
+            }
+          }
+        ]
+      });
+    }
+  }
+};
+checkPendingRequests();
+
+let { firstname, lastname, roles } = storeToRefs(mainStore);
+
+const formattedRoles = computed(() => {
+  return roles.value.map((role) => {
+    switch (role) {
+      case 'admin': return 'Администратор';
+      case 'customer': return 'Заказчик';
+      case 'directorate': return 'Дирекция ВШЦТ';
+      case 'expert': return 'Эксперт';
+      case 'user': return 'Студент';
+      default: return role;
+    }
+  });
+});
+
+const showProjectsButton = computed(() => {
+  return roles.value.some(role => ['admin', 'directorate', 'customer'].includes(role));
+});
+
+const showAdminButton = computed(() => {
+  return roles.value.some(role => ['admin', 'directorate'].includes(role));
+});
 
 const onLogout = () => {
   api.logout();
   router.push({ path: '/login' });
 };
+
+const goToProjects = () => router.push('/projects');
+const goToAdmin = () => router.push('/admin');
+const goToMarketplace = () => router.push('/marketplace');
+const goToIdeas = () => router.push('/ideas');
+const goToTeams = () => router.push('/teams');
+const openUserProfile = () => userProfile.value.open();
 </script>
 
 <style scoped>
+.header {
+  background-color: #424242;
+  border-bottom: 1px solid #616161;
+}
+
+.user-name {
+  color: white;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  font-weight: 500;
+}
+
+.user-name:hover {
+  color: #bdbdbd;
+}
+
+.user-role {
+  line-height: 1.2;
+}
+
+.nav-btn {
+  color: white;
+  letter-spacing: 0.5px;
+  text-transform: none;
+  font-weight: 400;
+}
+
+.nav-btn:hover {
+  color: #bdbdbd;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+.q-btn--flat:hover::before {
+  opacity: 0.1;
+}
+
 .q-toolbar {
+  padding: 0 16px;
   min-height: 64px;
 }
+</style>
 
-.q-avatar {
-  font-size: 24px;
+<style>
+.body--dark .header {
+  background-color: #212121;
+  border-bottom: 1px solid #424242;
 }
 
-.q-btn--round {
-  border-radius: 50%;
-}
-
-.q-drawer {
-  border-right: 1px solid rgba(0, 0, 0, 0.08);
+.body--dark .nav-btn:hover {
+  background-color: rgba(255, 255, 255, 0.08);
 }
 </style>

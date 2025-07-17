@@ -20,6 +20,10 @@ const $q = useQuasar();
 
 
 onMounted(async () => {
+  const savedMode = localStorage.getItem('darkMode');
+  if (savedMode) {
+    $q.dark.set(savedMode === 'true');
+  }
   const savedSession = await refresh();
 
   if (savedSession) {
@@ -33,16 +37,7 @@ onMounted(async () => {
 api.interceptors.response.use(function (response) {
   return response;
 }, function (error) {
-  if (error.response && error.response.status == 401) {
-    $q.notify({
-      type: 'negative',
-      position: 'bottom',
-      message: 'Ошибка авторизации',
-      icon: 'self_improvement',
-      timeout: 2000
-    });
-    router.push({ path: '/login' })
-  }
+  if (error.response && error.response.status == 401) {}
   return Promise.reject(error);
 })
 

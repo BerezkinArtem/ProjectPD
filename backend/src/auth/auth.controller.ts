@@ -1,67 +1,67 @@
 import {
 
-    Controller,
+  Controller,
   
-    Request,
+  Request,
   
-    Post,
+  Post,
   
-    UseGuards,
+  UseGuards,
   
-    Logger,
+  Logger,
   
-    HttpCode,
+  HttpCode,
   
-    Body,
+  Body,
   
-  } from '@nestjs/common';
+} from '@nestjs/common';
   
-  import { LocalAuthGuard } from './local-auth.guard';
+import { LocalAuthGuard } from './local-auth.guard';
   
-  import { AuthService } from './auth.service';
+import { AuthService } from './auth.service';
   
-  import { UsersService } from 'src/users/users.service';
+import { UsersService } from 'src/users/users.service';
   
-  import { SignUpRequestDto } from 'src/common/types';
-  
-   
-  
-  @Controller('auth')
-  
-  export class AuthController {
-  
-    private readonly logger = new Logger(AuthController.name);
-  
-    constructor(
-  
-      private authService: AuthService,
-  
-      private usersService: UsersService,
-  
-    ) {}
+import { SignUpRequestDto } from 'src/common/types';
   
    
   
-    @UseGuards(LocalAuthGuard)
+@Controller('auth')
   
-    @HttpCode(200)
+export class AuthController {
   
-    @Post('login')
+  private readonly logger = new Logger(AuthController.name);
   
-    async login(@Request() req) {
+  constructor(
   
-      return this.authService.login(req.user);
+    private authService: AuthService,
+
+    private usersService: UsersService,
   
-    }
+  ) {}
   
    
   
-    @Post('signup')
+  @UseGuards(LocalAuthGuard)
   
-    async signup(@Body() payload: SignUpRequestDto) {
+  @HttpCode(200)
   
-      return this.authService.signup(payload);
+  @Post('login')
   
-    }
+  async login(@Request() req) {
+  
+    return this.authService.login(req.user);
   
   }
+  
+   
+  
+  @Post('signup')
+  
+  async signup(@Body() payload: SignUpRequestDto) {
+  
+    return this.authService.signup(payload);
+  
+  }
+  
+}

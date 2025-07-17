@@ -15,10 +15,9 @@ const common_1 = require("@nestjs/common");
 const core_1 = require("@nestjs/core");
 const roles_decorator_1 = require("./roles.decorator");
 let RolesGuard = RolesGuard_1 = class RolesGuard {
-    reflector;
-    logger = new common_1.Logger(RolesGuard_1.name);
     constructor(reflector) {
         this.reflector = reflector;
+        this.logger = new common_1.Logger(RolesGuard_1.name);
     }
     canActivate(context) {
         const requiredRoles = this.reflector.getAllAndOverride(roles_decorator_1.ROLES_KEY, [

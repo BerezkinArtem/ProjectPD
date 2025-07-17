@@ -16,12 +16,10 @@ const jwt_1 = require("@nestjs/jwt");
 const bcrypt = require("bcrypt");
 const users_service_1 = require("../users/users.service");
 let AuthService = AuthService_1 = class AuthService {
-    usersService;
-    jwtService;
-    logger = new common_1.Logger(AuthService_1.name);
     constructor(usersService, jwtService) {
         this.usersService = usersService;
         this.jwtService = jwtService;
+        this.logger = new common_1.Logger(AuthService_1.name);
     }
     async validateUser(username, pass) {
         const user = await this.usersService.findOne(username);
@@ -35,14 +33,14 @@ let AuthService = AuthService_1 = class AuthService {
         return null;
     }
     async login(user) {
-        const payload = { username: user.name, sub: user.id, roles: user.roles };
+        const payload = { username: user.email, sub: user.id, roles: user.roles };
         return {
             access_token: this.jwtService.sign(payload),
-            username: user.name,
+            username: user.email,
             firstname: user.firstname,
             lastname: user.lastname,
             roles: user.roles,
-            userId: user.id
+            userId: user.id,
         };
     }
     async signup(payload) {
